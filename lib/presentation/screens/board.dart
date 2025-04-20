@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tetris/presentation/widgets/card_widget.dart';
+import 'package:tetris/presentation/widgets/pixel_widget.dart';
 
 class BoardScreen extends StatefulWidget {
   const BoardScreen({super.key});
@@ -21,27 +22,7 @@ class _BoardState extends State<BoardScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             const SizedBox(height: 10),
-            Padding(
-              padding: const EdgeInsets.only(left: 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const CardWidget(title: 'SCORE:', result: Text('data')),
-                  const CardWidget(
-                    title: 'NEXT:',
-                    result: Icon(Icons.outbox_outlined),
-                  ),
-                  IconButton(
-                    onPressed: () {},
-                    icon: Icon(
-                      Icons.pause,
-                      size: Theme.of(context).iconTheme.size,
-                      color: Theme.of(context).iconTheme.color,
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            _buildHeader(),
             Card(
               child: Padding(
                 padding: const EdgeInsets.all(8),
@@ -53,33 +34,47 @@ class _BoardState extends State<BoardScreen> {
                     crossAxisCount: rowLength,
                   ),
                   itemBuilder:
-                      (context, index) => Center(
-                        child: Text(
-                          index.toString(),
-                          style: Theme.of(context).textTheme.bodyMedium,
-                        ),
-                      ),
+                      (context, index) =>
+                          Center(child: PixelWidget(color: Colors.white)),
                 ),
               ),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                IconButton(
-                  onPressed: () {},
-                  icon: Icon(Icons.arrow_circle_left_outlined),
-                ),
-                IconButton(onPressed: () {}, icon: Icon(Icons.refresh_rounded)),
-                IconButton(
-                  onPressed: () {},
-                  icon: Icon(Icons.arrow_circle_right_outlined),
-                ),
-              ],
-            ),
+            _buildControlsButtons(),
             const SizedBox(height: 10),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildHeader() {
+    return Padding(
+      padding: const EdgeInsets.only(left: 20, right: 10),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          const CardWidget(title: 'SCORE:', result: Text('data')),
+          const CardWidget(title: 'NEXT:', result: Icon(Icons.outbox_outlined)),
+          IconButton(onPressed: () {}, icon: Icon(Icons.pause)),
+        ],
+      ),
+    );
+  }
+
+  Row _buildControlsButtons() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        IconButton(
+          onPressed: () {},
+          icon: Icon(Icons.arrow_circle_left_outlined),
+        ),
+        IconButton(onPressed: () {}, icon: Icon(Icons.refresh_rounded)),
+        IconButton(
+          onPressed: () {},
+          icon: Icon(Icons.arrow_circle_right_outlined),
+        ),
+      ],
     );
   }
 }
