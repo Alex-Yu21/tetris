@@ -1,112 +1,24 @@
-import 'dart:async';
-import 'dart:math';
-
 import 'package:flutter/material.dart';
-import 'package:tetris/domain/entities/piece.dart';
+import 'package:tetris/domain/logic/game_manager.dart';
 import 'package:tetris/presentation/widgets/card_widget.dart';
 import 'package:tetris/presentation/widgets/pixel_widget.dart';
 import 'package:tetris/domain/entities/values.dart';
 
-List<List<Tetromino?>> gameBoard = List.generate(
-  colLength,
-  (i) => List.generate(rowLength, (i) => null),
-);
-
 class BoardScreen extends StatefulWidget {
-  const BoardScreen({super.key});
+  const BoardScreen({super.key, required this.manager});
+
+  final GameManager manager;
 
   @override
   State<BoardScreen> createState() => _BoardState();
 }
 
 class _BoardState extends State<BoardScreen> {
-  // TODO dynamic new Piece
-  Piece currentPiece = Piece(type: Tetromino.L);
-
   @override
   void initState() {
     super.initState();
 
-    startGame();
-  }
-
-  void startGame() {
-    currentPiece.initializePiece();
-
-    Duration frameRate = const Duration(milliseconds: 800);
-    gameLoop(frameRate);
-  }
-
-  void gameLoop(Duration frameRate) {
-    Timer.periodic(frameRate, (timer) {
-      setState(() {
-        chekLanding();
-        currentPiece.movePiece(Direction.down);
-      });
-    });
-  }
-
-  bool checkCollision(Direction direction) {
-    for (int i = 0; i < currentPiece.position.length; i++) {
-      int row = (currentPiece.position[i] / rowLength).floor();
-      int col = currentPiece.position[i] % rowLength;
-      if (direction == Direction.left) {
-        col -= 1;
-      } else if (direction == Direction.right) {
-        col += 1;
-      } else if (direction == Direction.down) {
-        row += 1;
-      }
-
-      if (row >= colLength || col < 0 || col >= rowLength) {
-        return true;
-      }
-
-      if (row >= 0 && gameBoard[row][col] != null) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  void chekLanding() {
-    if (checkCollision(Direction.down)) {
-      for (int i = 0; i < currentPiece.position.length; i++) {
-        int row = (currentPiece.position[i] / rowLength).floor();
-        int col = currentPiece.position[i] % rowLength;
-        if (row >= 0 && col >= 0) {
-          gameBoard[row][col] = currentPiece.type;
-        }
-      }
-      createNewPiece();
-    }
-  }
-
-  void createNewPiece() {
-    Random rand = Random();
-
-    Tetromino randomType =
-        Tetromino.values[rand.nextInt(Tetromino.values.length)];
-    currentPiece = Piece(type: randomType);
-    currentPiece.initializePiece();
-  }
-
-  void moveRight() {
-    if (!checkCollision(Direction.right)) {
-      currentPiece.movePiece(Direction.right);
-    }
-  }
-
-  void moveLeft() {
-    if (!checkCollision(Direction.left)) {
-      currentPiece.movePiece(Direction.left);
-    }
-  }
-
-  void rotatePiece() {
-    setState(() {
-      currentPiece.rotatePiece();
-    });
+    widget.manager.startGame();
   }
 
   @override
@@ -131,13 +43,14 @@ class _BoardState extends State<BoardScreen> {
                   itemBuilder: (context, index) {
                     int row = (index / rowLength).floor();
                     int col = index % rowLength;
-                    if (currentPiece.position.contains(index)) {
+                    if (widget.manager.currentPiece.position.contains(index)) {
                       return PixelWidget(
-                        color: currentPiece.color,
+                        color: widget.manager.currentPiece.color,
                         child: index,
                       );
-                    } else if (gameBoard[row][col] != null) {
-                      final Tetromino? tetrominoType = gameBoard[row][col];
+                    } else if (widget.manager.gameBoard[row][col] != null) {
+                      final Tetromino? tetrominoType =
+                          widget.manager.gameBoard[row][col];
 
                       return PixelWidget(
                         color: tetrominoColors[tetrominoType]!,
@@ -180,12 +93,15 @@ class _BoardState extends State<BoardScreen> {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         IconButton(
-          onPressed: moveLeft,
+          onPressed: widget.manager.moveLeft,
           icon: Icon(Icons.arrow_circle_left_outlined),
         ),
-        IconButton(onPressed: rotatePiece, icon: Icon(Icons.refresh_rounded)),
         IconButton(
-          onPressed: moveRight,
+          onPressed: widget.manager.rotatePiece,
+          icon: Icon(Icons.refresh_rounded),
+        ),
+        IconButton(
+          onPressed: widget.manager.moveRight,
           icon: Icon(Icons.arrow_circle_right_outlined),
         ),
       ],

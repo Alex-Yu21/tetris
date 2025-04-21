@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tetris/domain/logic/game_manager.dart';
 import 'package:tetris/presentation/screens/board.dart';
 
 void main() {
@@ -33,7 +34,7 @@ class TetrisGame extends StatelessWidget {
         ),
         iconTheme: const IconThemeData(color: Color(0xFF744E2E), size: 60),
       ),
-      home: BoardScreen(),
+      home: BoardScreen(manager: GameManager()),
     );
   }
 }
