@@ -91,6 +91,24 @@ class _BoardState extends State<BoardScreen> {
     currentPiece.initializePiece();
   }
 
+  void moveRight() {
+    if (!checkCollision(Direction.right)) {
+      currentPiece.movePiece(Direction.right);
+    }
+  }
+
+  void moveLeft() {
+    if (!checkCollision(Direction.left)) {
+      currentPiece.movePiece(Direction.left);
+    }
+  }
+
+  void rotatePiece() {
+    setState(() {
+      currentPiece.rotatePiece();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -162,12 +180,12 @@ class _BoardState extends State<BoardScreen> {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         IconButton(
-          onPressed: () {},
+          onPressed: moveLeft,
           icon: Icon(Icons.arrow_circle_left_outlined),
         ),
-        IconButton(onPressed: () {}, icon: Icon(Icons.refresh_rounded)),
+        IconButton(onPressed: rotatePiece, icon: Icon(Icons.refresh_rounded)),
         IconButton(
-          onPressed: () {},
+          onPressed: moveRight,
           icon: Icon(Icons.arrow_circle_right_outlined),
         ),
       ],
