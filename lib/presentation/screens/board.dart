@@ -113,11 +113,14 @@ class _BoardState extends State<BoardScreen> {
                   itemBuilder: (context, index) {
                     int row = (index / rowLength).floor();
                     int col = index % rowLength;
-
                     if (currentPiece.position.contains(index)) {
-                      return PixelWidget(color: Colors.grey, child: index);
+                      return PixelWidget(
+                        color: currentPiece.color,
+                        child: index,
+                      );
                     } else if (gameBoard[row][col] != null) {
                       final Tetromino? tetrominoType = gameBoard[row][col];
+
                       return PixelWidget(
                         color: tetrominoColors[tetrominoType]!,
                         child: 1,
