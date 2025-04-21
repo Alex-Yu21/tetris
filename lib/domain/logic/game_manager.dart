@@ -18,10 +18,16 @@ class GameManager {
     gameLoop(frameRate);
   }
 
+  void Function()? onTick;
+
   void gameLoop(Duration frameRate) {
     Timer.periodic(frameRate, (timer) {
-      chekLanding();
-      currentPiece.movePiece(Direction.down);
+      if (checkCollision(Direction.down)) {
+        chekLanding();
+      } else {
+        currentPiece.movePiece(Direction.down);
+      }
+      onTick?.call();
     });
   }
 

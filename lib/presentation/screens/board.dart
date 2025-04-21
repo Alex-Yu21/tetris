@@ -17,7 +17,9 @@ class _BoardState extends State<BoardScreen> {
   @override
   void initState() {
     super.initState();
-
+    widget.manager.onTick = () {
+      setState(() {});
+    };
     widget.manager.startGame();
   }
 
