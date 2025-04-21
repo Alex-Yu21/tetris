@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:tetris/domain/entities/values.dart';
 
 class Piece {
@@ -5,11 +6,15 @@ class Piece {
   Tetromino type;
   List<int> position = [];
 
+  Color get color {
+    return tetrominoColors[type] ?? Colors.white;
+  }
+
   void initializePiece() {
     switch (type) {
       case Tetromino.L:
         position = [-26, -16, -6, -5];
-      case Tetromino.G:
+      case Tetromino.J:
         position = [-25, -15, -5, -6];
       case Tetromino.I:
         position = [-4, -5, -6, -7];

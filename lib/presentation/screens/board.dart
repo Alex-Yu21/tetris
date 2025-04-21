@@ -58,11 +58,11 @@ class _BoardState extends State<BoardScreen> {
         row += 1;
       }
 
-      if (row >= 0 && gameBoard[row][col] != null) {
+      if (row >= colLength || col < 0 || col >= rowLength) {
         return true;
       }
 
-      if (row >= colLength || col < 0 || col >= rowLength) {
+      if (row >= 0 && gameBoard[row][col] != null) {
         return true;
       }
     }
@@ -117,7 +117,11 @@ class _BoardState extends State<BoardScreen> {
                     if (currentPiece.position.contains(index)) {
                       return PixelWidget(color: Colors.grey, child: index);
                     } else if (gameBoard[row][col] != null) {
-                      return PixelWidget(color: Colors.grey, child: 1);
+                      final Tetromino? tetrominoType = gameBoard[row][col];
+                      return PixelWidget(
+                        color: tetrominoColors[tetrominoType]!,
+                        child: 1,
+                      );
                     } else {
                       return PixelWidget(
                         color: const Color.fromARGB(255, 244, 222, 185),
