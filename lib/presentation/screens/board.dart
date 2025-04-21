@@ -1,8 +1,16 @@
+import 'dart:async';
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:tetris/domain/entities/piece.dart';
 import 'package:tetris/presentation/widgets/card_widget.dart';
 import 'package:tetris/presentation/widgets/pixel_widget.dart';
 import 'package:tetris/domain/entities/values.dart';
+
+List<List<Tetromino?>> gameBoard = List.generate(
+  colLength,
+  (i) => List.generate(rowLength, (i) => null),
+);
 
 class BoardScreen extends StatefulWidget {
   const BoardScreen({super.key});
@@ -12,10 +20,6 @@ class BoardScreen extends StatefulWidget {
 }
 
 class _BoardState extends State<BoardScreen> {
-  // grid dimensions
-  final int rowLength = 10;
-  final int colLength = 15;
-
   // TODO dynamic new Piece
   Piece currentPiece = Piece(type: Tetromino.L);
 
@@ -27,6 +31,63 @@ class _BoardState extends State<BoardScreen> {
   }
 
   void startGame() {
+    currentPiece.initializePiece();
+
+    Duration frameRate = const Duration(milliseconds: 800);
+    gameLoop(frameRate);
+  }
+
+  void gameLoop(Duration frameRate) {
+    Timer.periodic(frameRate, (timer) {
+      setState(() {
+        chekLanding();
+        currentPiece.movePiece(Direction.down);
+      });
+    });
+  }
+
+  bool checkCollision(Direction direction) {
+    for (int i = 0; i < currentPiece.position.length; i++) {
+      int row = (currentPiece.position[i] / rowLength).floor();
+      int col = currentPiece.position[i] % rowLength;
+      if (direction == Direction.left) {
+        col -= 1;
+      } else if (direction == Direction.right) {
+        col += 1;
+      } else if (direction == Direction.down) {
+        row += 1;
+      }
+
+      if (row >= 0 && gameBoard[row][col] != null) {
+        return true;
+      }
+
+      if (row >= colLength || col < 0 || col >= rowLength) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  void chekLanding() {
+    if (checkCollision(Direction.down)) {
+      for (int i = 0; i < currentPiece.position.length; i++) {
+        int row = (currentPiece.position[i] / rowLength).floor();
+        int col = currentPiece.position[i] % rowLength;
+        if (row >= 0 && col >= 0) {
+          gameBoard[row][col] = currentPiece.type;
+        }
+      }
+      createNewPiece();
+    }
+  }
+
+  void createNewPiece() {
+    Random rand = Random();
+
+    Tetromino randomType =
+        Tetromino.values[rand.nextInt(Tetromino.values.length)];
+    currentPiece = Piece(type: randomType);
     currentPiece.initializePiece();
   }
 
@@ -50,8 +111,13 @@ class _BoardState extends State<BoardScreen> {
                     crossAxisCount: rowLength,
                   ),
                   itemBuilder: (context, index) {
+                    int row = (index / rowLength).floor();
+                    int col = index % rowLength;
+
                     if (currentPiece.position.contains(index)) {
                       return PixelWidget(color: Colors.grey, child: index);
+                    } else if (gameBoard[row][col] != null) {
+                      return PixelWidget(color: Colors.grey, child: 1);
                     } else {
                       return PixelWidget(
                         color: const Color.fromARGB(255, 244, 222, 185),

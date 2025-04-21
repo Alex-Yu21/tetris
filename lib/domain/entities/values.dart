@@ -1,3 +1,9 @@
+// grid dimensions
+final int rowLength = 10;
+final int colLength = 15;
+
+enum Direction { left, right, down }
+
 enum Tetromino {
   L,
   /*
