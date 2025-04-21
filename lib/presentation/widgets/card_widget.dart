@@ -26,7 +26,7 @@ class CardWidget extends StatelessWidget {
               width: double.infinity,
               alignment: Alignment.center,
               decoration: BoxDecoration(
-                color: Theme.of(context).cardTheme.color,
+                color: const Color.fromARGB(255, 244, 222, 185),
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(12),
                   topRight: Radius.circular(12),

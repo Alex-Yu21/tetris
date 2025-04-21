@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:tetris/domain/entities/piece.dart';
 import 'package:tetris/presentation/widgets/card_widget.dart';
 import 'package:tetris/presentation/widgets/pixel_widget.dart';
+import 'package:tetris/domain/entities/values.dart';
 
 class BoardScreen extends StatefulWidget {
   const BoardScreen({super.key});
@@ -13,6 +15,20 @@ class _BoardState extends State<BoardScreen> {
   // grid dimensions
   final int rowLength = 10;
   final int colLength = 15;
+
+  // TODO dynamic new Piece
+  Piece currentPiece = Piece(type: Tetromino.L);
+
+  @override
+  void initState() {
+    super.initState();
+
+    startGame();
+  }
+
+  void startGame() {
+    currentPiece.initializePiece();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,9 +49,16 @@ class _BoardState extends State<BoardScreen> {
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: rowLength,
                   ),
-                  itemBuilder:
-                      (context, index) =>
-                          Center(child: PixelWidget(color: Colors.white)),
+                  itemBuilder: (context, index) {
+                    if (currentPiece.position.contains(index)) {
+                      return PixelWidget(color: Colors.grey, child: index);
+                    } else {
+                      return PixelWidget(
+                        color: const Color.fromARGB(255, 244, 222, 185),
+                        child: index,
+                      );
+                    }
+                  },
                 ),
               ),
             ),
