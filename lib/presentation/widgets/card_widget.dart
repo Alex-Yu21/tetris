@@ -18,6 +18,14 @@ class CardWidget extends StatelessWidget {
           color: Theme.of(context).scaffoldBackgroundColor,
           border: Border.all(color: Theme.of(context).primaryColor, width: 3),
           borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Color.fromARGB(51, 0, 0, 0),
+              spreadRadius: 1,
+              blurRadius: 4,
+              offset: const Offset(2, 2),
+            ),
+          ],
         ),
         child: Column(
           children: [

@@ -126,22 +126,15 @@ class _BoardState extends State<BoardScreen> {
             int row = (index / rowLength).floor();
             int col = index % rowLength;
             if (widget.manager.currentPiece.position.contains(index)) {
-              return PixelWidget(
-                color: widget.manager.currentPiece.color,
-                child: index,
-              );
+              return PixelWidget(color: widget.manager.currentPiece.color);
             } else if (widget.manager.gameBoard[row][col] != null) {
               final Tetromino? tetrominoType =
                   widget.manager.gameBoard[row][col];
 
-              return PixelWidget(
-                color: tetrominoColors[tetrominoType]!,
-                child: 1,
-              );
+              return PixelWidget(color: tetrominoColors[tetrominoType]!);
             } else {
               return PixelWidget(
-                color: const Color.fromARGB(255, 244, 222, 185),
-                child: index,
+                color: const Color.fromARGB(255, 253, 239, 205),
               );
             }
           },
