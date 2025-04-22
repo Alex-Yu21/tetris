@@ -13,6 +13,7 @@ class GameManager {
   Piece? nextPiece;
   int currentScore = 0;
   bool gameOver = false;
+  bool isPaused = false;
 
   void startGame() {
     currentPiece.initializePiece();
@@ -36,6 +37,7 @@ class GameManager {
 
   void gameLoop(Duration frameRate) {
     Timer.periodic(frameRate, (timer) {
+      if (isPaused) return;
       if (checkCollision(Direction.down)) {
         chekLanding();
       } else {

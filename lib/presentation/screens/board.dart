@@ -3,6 +3,7 @@ import 'package:tetris/domain/logic/game_manager.dart';
 import 'package:tetris/presentation/widgets/button_icon_widget.dart';
 import 'package:tetris/presentation/widgets/button_widget.dart';
 import 'package:tetris/presentation/widgets/card_widget.dart';
+import 'package:tetris/presentation/widgets/pause_dialog.dart';
 import 'package:tetris/presentation/widgets/pixel_widget.dart';
 import 'package:tetris/domain/entities/values.dart';
 
@@ -19,13 +20,38 @@ class _BoardState extends State<BoardScreen> {
   @override
   void initState() {
     super.initState();
+
     widget.manager.onTick = () {
       setState(() {});
     };
-    widget.manager.startGame();
+
     widget.manager.onGameOver = () {
-      _showGameOverDialog();
+      widget.manager.isPaused = true;
+      _pauseDialog(isGameOver: true);
     };
+
+    widget.manager.startGame();
+  }
+
+  Future<void> _pauseDialog({required bool isGameOver}) {
+    return showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder:
+          (_) => PauseDialog(
+            score: widget.manager.currentScore,
+            isGameOver: isGameOver,
+            onContinue: () {
+              Navigator.pop(context);
+              setState(() {
+                if (isGameOver) {
+                  widget.manager.startGame();
+                }
+                widget.manager.isPaused = false;
+              });
+            },
+          ),
+    );
   }
 
   @override
@@ -56,9 +82,9 @@ class _BoardState extends State<BoardScreen> {
             title: 'SCORE:',
             result: Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              spacing: 8,
               children: [
                 Text(widget.manager.currentScore.toString()),
+                const SizedBox(width: 8),
                 Transform.scale(
                   scale: 2.5,
                   child: Image.asset('assets/icons/coin.png'),
@@ -79,8 +105,13 @@ class _BoardState extends State<BoardScreen> {
           ButtonIconWidget(
             normalImage: 'assets/buttons/button.png',
             pressedImage: 'assets/buttons/button_pr.png',
-            onTap: () {},
-            icon: Icon(Icons.pause),
+            icon: const Icon(Icons.pause),
+            onTap: () {
+              setState(() {
+                widget.manager.isPaused = true;
+              });
+              _pauseDialog(isGameOver: false);
+            },
           ),
         ],
       ),
@@ -93,18 +124,27 @@ class _BoardState extends State<BoardScreen> {
       children: [
         ButtonWidget(
           normalImage: 'assets/buttons/arrow_left.png',
-          onTap: widget.manager.moveLeft,
+          onTap: () {
+            widget.manager.moveLeft();
+            setState(() {});
+          },
           pressedImage: 'assets/buttons/arrow_left_pr.png',
         ),
         ButtonIconWidget(
-          icon: Icon(Icons.refresh_rounded),
+          icon: const Icon(Icons.refresh_rounded),
           normalImage: 'assets/buttons/button_circle.png',
           pressedImage: 'assets/buttons/button_circle_pr.png',
-          onTap: widget.manager.rotatePiece,
+          onTap: () {
+            widget.manager.rotatePiece();
+            setState(() {});
+          },
         ),
         ButtonWidget(
           normalImage: 'assets/buttons/arrow_right.png',
-          onTap: widget.manager.moveRight,
+          onTap: () {
+            widget.manager.moveRight();
+            setState(() {});
+          },
           pressedImage: 'assets/buttons/arrow_right_pr.png',
         ),
       ],
@@ -130,11 +170,10 @@ class _BoardState extends State<BoardScreen> {
             } else if (widget.manager.gameBoard[row][col] != null) {
               final Tetromino? tetrominoType =
                   widget.manager.gameBoard[row][col];
-
               return PixelWidget(color: tetrominoColors[tetrominoType]!);
             } else {
-              return PixelWidget(
-                color: const Color.fromARGB(255, 253, 239, 205),
+              return const PixelWidget(
+                color: Color.fromARGB(255, 253, 239, 205),
               );
             }
           },
@@ -142,6 +181,4 @@ class _BoardState extends State<BoardScreen> {
       ),
     );
   }
-
-  void _showGameOverDialog() {}
 }

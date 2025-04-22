@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class ButtonIconWidget extends StatefulWidget {
   final String normalImage;
   final String pressedImage;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
   final Icon icon;
   final double size;
 
