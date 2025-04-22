@@ -50,7 +50,16 @@ class _BoardState extends State<BoardScreen> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           const CardWidget(title: 'SCORE:', result: Text('data')),
-          const CardWidget(title: 'NEXT:', result: Icon(Icons.outbox_outlined)),
+          CardWidget(
+            title: 'NEXT:',
+            result: Text(
+              widget.manager.nextPiece?.type.name.toUpperCase().substring(
+                    0,
+                    1,
+                  ) ??
+                  '',
+            ),
+          ),
           ButtonIconWidget(
             normalImage: 'assets/button.png',
             pressedImage: 'assets/button_pr.png',

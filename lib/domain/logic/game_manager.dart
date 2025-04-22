@@ -10,9 +10,11 @@ class GameManager {
   );
 
   Piece currentPiece = Piece(type: Tetromino.L);
+  Piece? nextPiece;
 
   void startGame() {
     currentPiece.initializePiece();
+    nextPiece = _generateRandomPiece();
 
     Duration frameRate = const Duration(milliseconds: 800);
     gameLoop(frameRate);
@@ -72,12 +74,16 @@ class GameManager {
   }
 
   void createNewPiece() {
-    Random rand = Random();
+    currentPiece = nextPiece!;
+    currentPiece.initializePiece();
+    nextPiece = _generateRandomPiece();
+  }
 
+  Piece _generateRandomPiece() {
+    final rand = Random();
     Tetromino randomType =
         Tetromino.values[rand.nextInt(Tetromino.values.length)];
-    currentPiece = Piece(type: randomType);
-    currentPiece.initializePiece();
+    return Piece(type: randomType);
   }
 
   void moveRight() {
