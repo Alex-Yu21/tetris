@@ -51,11 +51,11 @@ enum Tetromino {
 }
 
 Map<Tetromino, Color> tetrominoColors = {
-  Tetromino.L: const Color.fromARGB(255, 129, 116, 78),
-  Tetromino.J: const Color.fromARGB(255, 202, 167, 93),
-  Tetromino.I: const Color.fromARGB(255, 191, 178, 102),
-  Tetromino.O: const Color.fromARGB(255, 205, 145, 89),
-  Tetromino.S: const Color.fromARGB(255, 198, 155, 104),
-  Tetromino.Z: const Color.fromARGB(255, 133, 122, 55),
-  Tetromino.T: const Color.fromARGB(255, 224, 139, 84),
+  Tetromino.L: const Color.fromARGB(255, 199, 175, 255),
+  Tetromino.J: const Color.fromARGB(255, 223, 164, 161),
+  Tetromino.I: const Color.fromARGB(255, 194, 123, 131),
+  Tetromino.O: const Color.fromARGB(255, 136, 161, 111),
+  Tetromino.S: const Color.fromARGB(255, 106, 144, 107),
+  Tetromino.Z: const Color.fromARGB(255, 146, 178, 212),
+  Tetromino.T: const Color.fromARGB(255, 180, 203, 221),
 };

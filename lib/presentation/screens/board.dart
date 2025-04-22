@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tetris/domain/logic/game_manager.dart';
+import 'package:tetris/presentation/widgets/button_icon_widget.dart';
+import 'package:tetris/presentation/widgets/button_widget.dart';
 import 'package:tetris/presentation/widgets/card_widget.dart';
 import 'package:tetris/presentation/widgets/pixel_widget.dart';
 import 'package:tetris/domain/entities/values.dart';
@@ -84,7 +86,12 @@ class _BoardState extends State<BoardScreen> {
         children: [
           const CardWidget(title: 'SCORE:', result: Text('data')),
           const CardWidget(title: 'NEXT:', result: Icon(Icons.outbox_outlined)),
-          IconButton(onPressed: () {}, icon: Icon(Icons.pause)),
+          ButtonIconWidget(
+            normalImage: 'assets/button.png',
+            pressedImage: 'assets/button_pr.png',
+            onTap: () {},
+            icon: Icon(Icons.pause),
+          ),
         ],
       ),
     );
@@ -94,17 +101,21 @@ class _BoardState extends State<BoardScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        IconButton(
-          onPressed: widget.manager.moveLeft,
-          icon: Icon(Icons.arrow_circle_left_outlined),
+        ButtonWidget(
+          normalImage: 'assets/arrow_left.png',
+          onTap: widget.manager.moveLeft,
+          pressedImage: 'assets/arrow_left_pr.png',
         ),
-        IconButton(
-          onPressed: widget.manager.rotatePiece,
+        ButtonIconWidget(
           icon: Icon(Icons.refresh_rounded),
+          normalImage: 'assets/button_circle.png',
+          pressedImage: 'assets/button_circle_pr.png',
+          onTap: widget.manager.rotatePiece,
         ),
-        IconButton(
-          onPressed: widget.manager.moveRight,
-          icon: Icon(Icons.arrow_circle_right_outlined),
+        ButtonWidget(
+          normalImage: 'assets/arrow_right.png',
+          onTap: widget.manager.moveRight,
+          pressedImage: 'assets/arrow_right_pr.png',
         ),
       ],
     );

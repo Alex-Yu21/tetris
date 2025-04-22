@@ -32,7 +32,10 @@ class TetrisGame extends StatelessWidget {
             color: Color(0xFF744E2E),
           ),
         ),
-        iconTheme: const IconThemeData(color: Color(0xFF744E2E), size: 60),
+        iconTheme: const IconThemeData(
+          color: Color.fromARGB(184, 116, 78, 46),
+          size: 45,
+        ),
       ),
       home: BoardScreen(manager: GameManager()),
     );
