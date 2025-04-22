@@ -23,6 +23,9 @@ class _BoardState extends State<BoardScreen> {
       setState(() {});
     };
     widget.manager.startGame();
+    widget.manager.onGameOver = () {
+      _showGameOverDialog();
+    };
   }
 
   @override
@@ -146,4 +149,6 @@ class _BoardState extends State<BoardScreen> {
       ),
     );
   }
+
+  void _showGameOverDialog() {}
 }

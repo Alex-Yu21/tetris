@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:math';
+import 'package:flutter/material.dart';
 import 'package:tetris/domain/entities/piece.dart';
 import 'package:tetris/domain/entities/values.dart';
 
@@ -12,6 +13,7 @@ class GameManager {
   Piece currentPiece = Piece(type: Tetromino.L);
   Piece? nextPiece;
   int currentScore = 0;
+  bool gameOver = false;
 
   void startGame() {
     currentPiece.initializePiece();
@@ -21,7 +23,17 @@ class GameManager {
     gameLoop(frameRate);
   }
 
+  bool isGameOver() {
+    for (int col = 0; col < rowLength; col++) {
+      if (gameBoard[0][col] != null) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   void Function()? onTick;
+  void Function()? onGameOver;
 
   void gameLoop(Duration frameRate) {
     Timer.periodic(frameRate, (timer) {
@@ -31,6 +43,10 @@ class GameManager {
         currentPiece.movePiece(Direction.down);
       }
       onTick?.call();
+      if (gameOver) {
+        timer.cancel();
+        onGameOver?.call();
+      }
     });
   }
 
@@ -75,6 +91,9 @@ class GameManager {
     currentPiece = nextPiece!;
     currentPiece.initializePiece();
     nextPiece = _generateRandomPiece();
+    if (isGameOver()) {
+      gameOver = true;
+    }
   }
 
   Piece _generateRandomPiece() {
