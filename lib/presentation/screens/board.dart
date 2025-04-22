@@ -34,42 +34,7 @@ class _BoardState extends State<BoardScreen> {
           children: [
             const SizedBox(height: 10),
             _buildHeader(),
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(8),
-                child: GridView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: rowLength * colLength,
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: rowLength,
-                  ),
-                  itemBuilder: (context, index) {
-                    int row = (index / rowLength).floor();
-                    int col = index % rowLength;
-                    if (widget.manager.currentPiece.position.contains(index)) {
-                      return PixelWidget(
-                        color: widget.manager.currentPiece.color,
-                        child: index,
-                      );
-                    } else if (widget.manager.gameBoard[row][col] != null) {
-                      final Tetromino? tetrominoType =
-                          widget.manager.gameBoard[row][col];
-
-                      return PixelWidget(
-                        color: tetrominoColors[tetrominoType]!,
-                        child: 1,
-                      );
-                    } else {
-                      return PixelWidget(
-                        color: const Color.fromARGB(255, 244, 222, 185),
-                        child: index,
-                      );
-                    }
-                  },
-                ),
-              ),
-            ),
+            _buildGrid(),
             _buildControlsButtons(),
             const SizedBox(height: 10),
           ],
@@ -118,6 +83,45 @@ class _BoardState extends State<BoardScreen> {
           pressedImage: 'assets/arrow_right_pr.png',
         ),
       ],
+    );
+  }
+
+  Card _buildGrid() {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(8),
+        child: GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: rowLength * colLength,
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: rowLength,
+          ),
+          itemBuilder: (context, index) {
+            int row = (index / rowLength).floor();
+            int col = index % rowLength;
+            if (widget.manager.currentPiece.position.contains(index)) {
+              return PixelWidget(
+                color: widget.manager.currentPiece.color,
+                child: index,
+              );
+            } else if (widget.manager.gameBoard[row][col] != null) {
+              final Tetromino? tetrominoType =
+                  widget.manager.gameBoard[row][col];
+
+              return PixelWidget(
+                color: tetrominoColors[tetrominoType]!,
+                child: 1,
+              );
+            } else {
+              return PixelWidget(
+                color: const Color.fromARGB(255, 244, 222, 185),
+                child: index,
+              );
+            }
+          },
+        ),
+      ),
     );
   }
 }
