@@ -4,8 +4,9 @@ class ButtonIconWidget extends StatefulWidget {
   final String normalImage;
   final String pressedImage;
   final VoidCallback? onTap;
-  final Icon icon;
+  final Widget icon;
   final double size;
+  final double scale;
 
   const ButtonIconWidget({
     super.key,
@@ -14,6 +15,7 @@ class ButtonIconWidget extends StatefulWidget {
     required this.onTap,
     required this.icon,
     this.size = 60,
+    this.scale = 3,
   });
 
   @override
@@ -55,7 +57,7 @@ class _ButtonIconWidgetState extends State<ButtonIconWidget> {
         alignment: Alignment.center,
         children: [
           Transform.scale(
-            scale: 3,
+            scale: widget.scale,
             child: Image.asset(
               isPressed ? widget.pressedImage : widget.normalImage,
               width: widget.size,

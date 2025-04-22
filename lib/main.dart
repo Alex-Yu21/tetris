@@ -36,6 +36,15 @@ class TetrisGame extends StatelessWidget {
           color: Color.fromARGB(184, 116, 78, 46),
           size: 45,
         ),
+        dialogTheme: DialogTheme(
+          shadowColor: Color.fromARGB(184, 116, 78, 46),
+          backgroundColor: const Color(0xFFFFF8E8),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+            side: const BorderSide(color: Color(0xFF744E2E), width: 3),
+          ),
+          elevation: 4,
+        ),
       ),
       home: BoardScreen(manager: GameManager()),
     );

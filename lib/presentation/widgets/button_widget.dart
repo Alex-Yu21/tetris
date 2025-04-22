@@ -5,6 +5,7 @@ class ButtonWidget extends StatefulWidget {
   final String pressedImage;
   final VoidCallback? onTap;
   final double size;
+  final double scale;
 
   const ButtonWidget({
     super.key,
@@ -12,6 +13,7 @@ class ButtonWidget extends StatefulWidget {
     required this.pressedImage,
     required this.onTap,
     this.size = 60,
+    this.scale = 3,
   });
 
   @override
@@ -50,7 +52,7 @@ class _ButtonWidgetState extends State<ButtonWidget> {
       onTapUp: _unTap,
       onTapCancel: _cancelTap,
       child: Transform.scale(
-        scale: 3,
+        scale: widget.scale,
         child: Image.asset(
           isPressed ? widget.pressedImage : widget.normalImage,
           width: widget.size,
