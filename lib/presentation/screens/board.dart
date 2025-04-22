@@ -41,6 +41,12 @@ class _BoardState extends State<BoardScreen> {
           (_) => PauseDialog(
             score: widget.manager.currentScore,
             isGameOver: isGameOver,
+            onRestart: () {
+              widget.manager.reStartGame();
+              setState(() {});
+              Navigator.of(context).pop();
+            },
+
             onContinue: () {
               Navigator.pop(context);
               setState(() {

@@ -14,6 +14,23 @@ class GameManager {
   int currentScore = 0;
   bool gameOver = false;
   bool isPaused = false;
+  Timer? gameTimer;
+
+  void reStartGame() {
+    gameTimer?.cancel();
+    gameBoard = List.generate(
+      colLength,
+      (i) => List.generate(rowLength, (i) => null),
+    );
+    currentScore = 0;
+    gameOver = false;
+    isPaused = false;
+    currentPiece = _generateRandomPiece();
+    currentPiece.initializePiece();
+    nextPiece = _generateRandomPiece();
+
+    gameLoop(const Duration(milliseconds: 800));
+  }
 
   void startGame() {
     currentPiece.initializePiece();
@@ -36,7 +53,8 @@ class GameManager {
   void Function()? onGameOver;
 
   void gameLoop(Duration frameRate) {
-    Timer.periodic(frameRate, (timer) {
+    gameTimer?.cancel();
+    gameTimer = Timer.periodic(frameRate, (timer) {
       if (isPaused) return;
       if (checkCollision(Direction.down)) {
         chekLanding();
