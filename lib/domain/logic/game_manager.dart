@@ -11,6 +11,7 @@ class GameManager {
 
   Piece currentPiece = Piece(type: Tetromino.L);
   Piece? nextPiece;
+  int currentScore = 0;
 
   void startGame() {
     currentPiece.initializePiece();
@@ -65,6 +66,7 @@ class GameManager {
           gameBoard[row][col] = currentPiece.type;
         }
       }
+      clearLines();
       createNewPiece();
     }
   }
@@ -80,6 +82,26 @@ class GameManager {
     Tetromino randomType =
         Tetromino.values[rand.nextInt(Tetromino.values.length)];
     return Piece(type: randomType);
+  }
+
+  void clearLines() {
+    for (int row = colLength - 1; row >= 0; row--) {
+      bool rowIsFull = true;
+      for (int col = 0; col < rowLength; col++) {
+        if (gameBoard[row][col] == null) {
+          rowIsFull = false;
+          break;
+        }
+      }
+      if (rowIsFull) {
+        for (int r = row; r > 0; r--) {
+          gameBoard[r] = List.from(gameBoard[r - 1]);
+        }
+        gameBoard[0] = List.generate(rowLength, (index) => null);
+        currentScore++;
+        row++;
+      }
+    }
   }
 
   void moveRight() {
@@ -98,7 +120,7 @@ class GameManager {
     int row = (position / rowLength).floor();
     int col = position % rowLength;
 
-    if (row < 0 || col < 0 || gameBoard[col][row] != null) {
+    if (row < 0 || col < 0 || gameBoard[row][col] != null) {
       return false;
     } else {
       return true;

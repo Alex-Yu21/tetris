@@ -49,7 +49,20 @@ class _BoardState extends State<BoardScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const CardWidget(title: 'SCORE:', result: Text('data')),
+          CardWidget(
+            title: 'SCORE:',
+            result: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              spacing: 8,
+              children: [
+                Text(widget.manager.currentScore.toString()),
+                Transform.scale(
+                  scale: 2.5,
+                  child: Image.asset('assets/icons/coin.png'),
+                ),
+              ],
+            ),
+          ),
           CardWidget(
             title: 'NEXT:',
             result: Text(
@@ -61,8 +74,8 @@ class _BoardState extends State<BoardScreen> {
             ),
           ),
           ButtonIconWidget(
-            normalImage: 'assets/button.png',
-            pressedImage: 'assets/button_pr.png',
+            normalImage: 'assets/buttons/button.png',
+            pressedImage: 'assets/buttons/button_pr.png',
             onTap: () {},
             icon: Icon(Icons.pause),
           ),
@@ -76,20 +89,20 @@ class _BoardState extends State<BoardScreen> {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         ButtonWidget(
-          normalImage: 'assets/arrow_left.png',
+          normalImage: 'assets/buttons/arrow_left.png',
           onTap: widget.manager.moveLeft,
-          pressedImage: 'assets/arrow_left_pr.png',
+          pressedImage: 'assets/buttons/arrow_left_pr.png',
         ),
         ButtonIconWidget(
           icon: Icon(Icons.refresh_rounded),
-          normalImage: 'assets/button_circle.png',
-          pressedImage: 'assets/button_circle_pr.png',
+          normalImage: 'assets/buttons/button_circle.png',
+          pressedImage: 'assets/buttons/button_circle_pr.png',
           onTap: widget.manager.rotatePiece,
         ),
         ButtonWidget(
-          normalImage: 'assets/arrow_right.png',
+          normalImage: 'assets/buttons/arrow_right.png',
           onTap: widget.manager.moveRight,
-          pressedImage: 'assets/arrow_right_pr.png',
+          pressedImage: 'assets/buttons/arrow_right_pr.png',
         ),
       ],
     );
