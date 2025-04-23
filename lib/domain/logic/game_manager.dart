@@ -3,6 +3,7 @@ import 'package:tetris/domain/entities/piece.dart';
 import 'package:tetris/domain/entities/values.dart';
 import 'package:tetris/domain/logic/board_service.dart';
 import 'package:tetris/domain/logic/game_loop.dart';
+import 'package:tetris/domain/usecases/landing_usecase.dart';
 import 'package:tetris/domain/usecases/rotate_piece_usecase.dart';
 
 class GameManager {
@@ -70,17 +71,12 @@ class GameManager {
   }
 
   void checkLanding() {
-    if (checkCollision(Direction.down)) {
-      for (int i = 0; i < currentPiece.position.length; i++) {
-        int row = (currentPiece.position[i] / rowLength).floor();
-        int col = currentPiece.position[i] % rowLength;
-        if (row >= 0 && col >= 0) {
-          gameBoard[row][col] = currentPiece.type;
-        }
-      }
-      BoardService.clearLines(gameBoard, rowLength, colLength);
-      createNewPiece();
-    }
+    LandingUseCase(
+      board: gameBoard,
+      rowLength: rowLength,
+      colLength: colLength,
+      createNewPiece: createNewPiece,
+    ).execute(currentPiece);
   }
 
   void createNewPiece() {
