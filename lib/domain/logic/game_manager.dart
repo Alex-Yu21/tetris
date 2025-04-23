@@ -3,6 +3,7 @@ import 'package:tetris/domain/entities/piece.dart';
 import 'package:tetris/domain/entities/values.dart';
 import 'package:tetris/domain/logic/board_service.dart';
 import 'package:tetris/domain/logic/game_loop.dart';
+import 'package:tetris/domain/logic/rotate_piece_usecase.dart';
 
 class GameManager {
   List<List<Tetromino?>> gameBoard = List.generate(
@@ -10,13 +11,23 @@ class GameManager {
     (i) => List.generate(rowLength, (i) => null),
   );
 
-  Piece currentPiece = Piece(type: Tetromino.Z);
+  Piece currentPiece = Piece(type: Tetromino.O);
   Piece? nextPiece;
   int currentScore = 0;
   bool gameOver = false;
   bool isPaused = false;
+
   void Function()? onTick;
   void Function()? onGameOver;
+
+  void _setCurrentPiece(Piece piece) {
+    currentPiece = piece;
+    currentPiece.initializePiece();
+  }
+
+  void _generateNextPiece() {
+    nextPiece = _generateRandomPiece();
+  }
 
   // TODO: rotation near border
 
@@ -38,8 +49,8 @@ class GameManager {
   }
 
   void startGame() {
-    currentPiece.initializePiece();
-    nextPiece = _generateRandomPiece();
+    _setCurrentPiece(_generateRandomPiece());
+    _generateNextPiece();
     _loop = GameLoop(this);
     _loop!.start(const Duration(milliseconds: 800));
   }
@@ -85,15 +96,14 @@ class GameManager {
           gameBoard[row][col] = currentPiece.type;
         }
       }
-      BoardService(this).clearLines();
+      BoardService.clearLines(gameBoard, rowLength, colLength);
       createNewPiece();
     }
   }
 
   void createNewPiece() {
-    currentPiece = nextPiece!;
-    currentPiece.initializePiece();
-    nextPiece = _generateRandomPiece();
+    _setCurrentPiece(nextPiece!);
+    _generateNextPiece();
     if (isTopRowOccupied()) {
       gameOver = true;
     }
@@ -119,178 +129,9 @@ class GameManager {
   }
 
   void rotatePiece() {
-    List<int> newPosition = [];
-    final pos = currentPiece.position;
-    final type = currentPiece.type;
-
-    switch (type) {
-      case Tetromino.L:
-        switch (currentPiece.rotationState % 4) {
-          case 0:
-            newPosition = [
-              pos[1] - rowLength,
-              pos[1],
-              pos[1] + rowLength,
-              pos[1] + rowLength + 1,
-            ];
-            break;
-          case 1:
-            newPosition = [
-              pos[1] - 1,
-              pos[1],
-              pos[1] + 1,
-              pos[1] + rowLength - 1,
-            ];
-            break;
-          case 2:
-            newPosition = [
-              pos[1] + rowLength,
-              pos[1],
-              pos[1] - rowLength,
-              pos[1] - rowLength - 1,
-            ];
-            break;
-          case 3:
-            newPosition = [
-              pos[1] - rowLength + 1,
-              pos[1],
-              pos[1] + 1,
-              pos[1] - 1,
-            ];
-            break;
-        }
-        break;
-
-      case Tetromino.J:
-        switch (currentPiece.rotationState % 4) {
-          case 0:
-            newPosition = [
-              pos[1] - rowLength,
-              pos[1],
-              pos[1] + rowLength,
-              pos[1] + rowLength - 1,
-            ];
-            break;
-          case 1:
-            newPosition = [
-              pos[1] - 1,
-              pos[1],
-              pos[1] + 1,
-              pos[1] - rowLength - 1,
-            ];
-            break;
-          case 2:
-            newPosition = [
-              pos[1] + rowLength,
-              pos[1],
-              pos[1] - rowLength,
-              pos[1] - rowLength + 1,
-            ];
-            break;
-          case 3:
-            newPosition = [
-              pos[1] + 1,
-              pos[1],
-              pos[1] - 1,
-              pos[1] + rowLength + 1,
-            ];
-            break;
-        }
-        break;
-
-      case Tetromino.I:
-        switch (currentPiece.rotationState % 2) {
-          case 0:
-            newPosition = [
-              pos[1] - rowLength,
-              pos[1],
-              pos[1] + rowLength,
-              pos[1] + 2 * rowLength,
-            ];
-            break;
-          case 1:
-            newPosition = [pos[1] - 1, pos[1], pos[1] + 1, pos[1] + 2];
-            break;
-        }
-        break;
-
-      case Tetromino.O:
-        newPosition = List.from(pos);
-        break;
-
-      case Tetromino.Z:
-        switch (currentPiece.rotationState % 2) {
-          case 0:
-            newPosition = [
-              pos[1] - rowLength,
-              pos[1],
-              pos[1] - 1,
-              pos[1] + rowLength - 1,
-            ];
-            break;
-          case 1:
-            newPosition = [
-              pos[1] - 1,
-              pos[1],
-              pos[1] + rowLength,
-              pos[1] + rowLength + 1,
-            ];
-            break;
-        }
-        break;
-
-      case Tetromino.S:
-        switch (currentPiece.rotationState % 2) {
-          case 0:
-            newPosition = [
-              pos[1] - rowLength,
-              pos[1],
-              pos[1] + 1,
-              pos[1] + rowLength + 1,
-            ];
-            break;
-          case 1:
-            newPosition = [
-              pos[1] + 1,
-              pos[1],
-              pos[1] + rowLength,
-              pos[1] + rowLength - 1,
-            ];
-            break;
-        }
-        break;
-
-      case Tetromino.T:
-        switch (currentPiece.rotationState % 4) {
-          case 0:
-            newPosition = [
-              pos[1] - rowLength,
-              pos[1],
-              pos[1] + 1,
-              pos[1] + rowLength,
-            ];
-            break;
-          case 1:
-            newPosition = [pos[1] - 1, pos[1], pos[1] + 1, pos[1] - rowLength];
-            break;
-          case 2:
-            newPosition = [
-              pos[1] - rowLength,
-              pos[1],
-              pos[1] + rowLength,
-              pos[1] - 1,
-            ];
-            break;
-          case 3:
-            newPosition = [pos[1] + 1, pos[1], pos[1] - 1, pos[1] + rowLength];
-            break;
-        }
-        break;
-    }
-
-    if (BoardService(this).piecePositionIsValid(newPosition)) {
-      currentPiece.position = newPosition;
-      currentPiece.rotationState = (currentPiece.rotationState + 1) % 4;
-    }
+    RotatePieceUseCase(
+      board: gameBoard,
+      rowLength: rowLength,
+    ).execute(currentPiece);
   }
 }
