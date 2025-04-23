@@ -9,12 +9,14 @@ class GameManager {
     (i) => List.generate(rowLength, (i) => null),
   );
 
-  Piece currentPiece = Piece(type: Tetromino.L);
+  Piece currentPiece = Piece(type: Tetromino.Z);
   Piece? nextPiece;
   int currentScore = 0;
   bool gameOver = false;
   bool isPaused = false;
   Timer? gameTimer;
+
+  // TODO: rotaition near border
 
   void reStartGame() {
     gameTimer?.cancel();
@@ -192,7 +194,7 @@ class GameManager {
 
     switch (type) {
       case Tetromino.L:
-        switch (currentPiece.rotationState) {
+        switch (currentPiece.rotationState % 4) {
           case 0:
             newPosition = [
               pos[1] - rowLength,
@@ -229,7 +231,7 @@ class GameManager {
         break;
 
       case Tetromino.J:
-        switch (currentPiece.rotationState) {
+        switch (currentPiece.rotationState % 4) {
           case 0:
             newPosition = [
               pos[1] - rowLength,
@@ -285,7 +287,7 @@ class GameManager {
         newPosition = List.from(pos);
         break;
 
-      case Tetromino.S:
+      case Tetromino.Z:
         switch (currentPiece.rotationState % 2) {
           case 0:
             newPosition = [
@@ -306,7 +308,7 @@ class GameManager {
         }
         break;
 
-      case Tetromino.Z:
+      case Tetromino.S:
         switch (currentPiece.rotationState % 2) {
           case 0:
             newPosition = [
@@ -318,7 +320,7 @@ class GameManager {
             break;
           case 1:
             newPosition = [
-              pos[1] - 1,
+              pos[1] + 1,
               pos[1],
               pos[1] + rowLength,
               pos[1] + rowLength - 1,
@@ -328,7 +330,7 @@ class GameManager {
         break;
 
       case Tetromino.T:
-        switch (currentPiece.rotationState) {
+        switch (currentPiece.rotationState % 4) {
           case 0:
             newPosition = [
               pos[1] - rowLength,

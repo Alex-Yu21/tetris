@@ -38,7 +38,7 @@ class PauseDialog extends StatelessWidget {
                 ButtonWidget(
                   normalImage: 'assets/buttons/close.png',
                   onTap: () {
-                    onContinue();
+                    isGameOver ? onRestart() : onContinue();
                   },
                   pressedImage: 'assets/buttons/close_pr.png',
                   scale: 2,
