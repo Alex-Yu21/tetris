@@ -1,7 +1,7 @@
-import 'dart:async';
 import 'dart:math';
 import 'package:tetris/domain/entities/piece.dart';
 import 'package:tetris/domain/entities/values.dart';
+import 'package:tetris/domain/logic/game_loop.dart';
 
 class GameManager {
   List<List<Tetromino?>> gameBoard = List.generate(
@@ -14,12 +14,14 @@ class GameManager {
   int currentScore = 0;
   bool gameOver = false;
   bool isPaused = false;
-  Timer? gameTimer;
+  void Function()? onTick;
+  void Function()? onGameOver;
 
-  // TODO: rotaition near border
+  // TODO: rotation near border
+
+  GameLoop? _loop;
 
   void reStartGame() {
-    gameTimer?.cancel();
     gameBoard = List.generate(
       colLength,
       (i) => List.generate(rowLength, (i) => null),
@@ -30,45 +32,24 @@ class GameManager {
     currentPiece = _generateRandomPiece();
     currentPiece.initializePiece();
     nextPiece = _generateRandomPiece();
-
-    gameLoop(const Duration(milliseconds: 800));
+    _loop ??= GameLoop(this);
+    _loop!.start(const Duration(milliseconds: 800));
   }
 
   void startGame() {
     currentPiece.initializePiece();
     nextPiece = _generateRandomPiece();
-
-    Duration frameRate = const Duration(milliseconds: 800);
-    gameLoop(frameRate);
+    _loop = GameLoop(this);
+    _loop!.start(const Duration(milliseconds: 800));
   }
 
-  bool isGameOver() {
+  bool isTopRowOccupied() {
     for (int col = 0; col < rowLength; col++) {
       if (gameBoard[0][col] != null) {
         return true;
       }
     }
     return false;
-  }
-
-  void Function()? onTick;
-  void Function()? onGameOver;
-
-  void gameLoop(Duration frameRate) {
-    gameTimer?.cancel();
-    gameTimer = Timer.periodic(frameRate, (timer) {
-      if (isPaused) return;
-      if (checkCollision(Direction.down)) {
-        chekLanding();
-      } else {
-        currentPiece.movePiece(Direction.down);
-      }
-      onTick?.call();
-      if (gameOver) {
-        timer.cancel();
-        onGameOver?.call();
-      }
-    });
   }
 
   bool checkCollision(Direction direction) {
@@ -94,7 +75,7 @@ class GameManager {
     return false;
   }
 
-  void chekLanding() {
+  void checkLanding() {
     if (checkCollision(Direction.down)) {
       for (int i = 0; i < currentPiece.position.length; i++) {
         int row = (currentPiece.position[i] / rowLength).floor();
@@ -112,7 +93,7 @@ class GameManager {
     currentPiece = nextPiece!;
     currentPiece.initializePiece();
     nextPiece = _generateRandomPiece();
-    if (isGameOver()) {
+    if (isTopRowOccupied()) {
       gameOver = true;
     }
   }
