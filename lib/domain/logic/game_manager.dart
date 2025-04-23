@@ -3,7 +3,7 @@ import 'package:tetris/domain/entities/piece.dart';
 import 'package:tetris/domain/entities/values.dart';
 import 'package:tetris/domain/logic/board_service.dart';
 import 'package:tetris/domain/logic/game_loop.dart';
-import 'package:tetris/domain/logic/rotate_piece_usecase.dart';
+import 'package:tetris/domain/usecases/rotate_piece_usecase.dart';
 
 class GameManager {
   List<List<Tetromino?>> gameBoard = List.generate(
@@ -55,36 +55,18 @@ class GameManager {
     _loop!.start(const Duration(milliseconds: 800));
   }
 
-  bool isTopRowOccupied() {
-    for (int col = 0; col < rowLength; col++) {
-      if (gameBoard[0][col] != null) {
-        return true;
-      }
-    }
-    return false;
+  bool checkCollision(Direction direction) {
+    return BoardService.checkCollision(
+      board: gameBoard,
+      piecePosition: currentPiece.position,
+      direction: direction,
+      rowLength: rowLength,
+      colLength: colLength,
+    );
   }
 
-  bool checkCollision(Direction direction) {
-    for (int i = 0; i < currentPiece.position.length; i++) {
-      int row = (currentPiece.position[i] / rowLength).floor();
-      int col = currentPiece.position[i] % rowLength;
-      if (direction == Direction.left) {
-        col -= 1;
-      } else if (direction == Direction.right) {
-        col += 1;
-      } else if (direction == Direction.down) {
-        row += 1;
-      }
-
-      if (row >= colLength || col < 0 || col >= rowLength) {
-        return true;
-      }
-
-      if (row >= 0 && gameBoard[row][col] != null) {
-        return true;
-      }
-    }
-    return false;
+  bool isTopRowOccupied() {
+    return BoardService.isTopRowOccupied(board: gameBoard);
   }
 
   void checkLanding() {

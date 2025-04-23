@@ -32,6 +32,45 @@ class BoardService {
     }
   }
 
+  static bool isTopRowOccupied({required List<List<Tetromino?>> board}) {
+    for (int col = 0; col < rowLength; col++) {
+      if (board[0][col] != null) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  static bool checkCollision({
+    required List<List<Tetromino?>> board,
+    required List<int> piecePosition,
+    required Direction direction,
+    required int rowLength,
+    required int colLength,
+  }) {
+    for (int i = 0; i < piecePosition.length; i++) {
+      int row = (piecePosition[i] / rowLength).floor();
+      int col = piecePosition[i] % rowLength;
+
+      if (direction == Direction.left) {
+        col -= 1;
+      } else if (direction == Direction.right) {
+        col += 1;
+      } else if (direction == Direction.down) {
+        row += 1;
+      }
+
+      if (row >= colLength || col < 0 || col >= rowLength) {
+        return true;
+      }
+
+      if (row >= 0 && board[row][col] != null) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   static bool boardHasValidPosition(
     List<List<Tetromino?>> board,
     List<int> piecePosition,
