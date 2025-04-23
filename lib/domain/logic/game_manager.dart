@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:tetris/domain/entities/piece.dart';
 import 'package:tetris/domain/entities/values.dart';
+import 'package:tetris/domain/logic/board_service.dart';
 import 'package:tetris/domain/logic/game_loop.dart';
 
 class GameManager {
@@ -84,7 +85,7 @@ class GameManager {
           gameBoard[row][col] = currentPiece.type;
         }
       }
-      clearLines();
+      BoardService(this).clearLines();
       createNewPiece();
     }
   }
@@ -105,26 +106,6 @@ class GameManager {
     return Piece(type: randomType);
   }
 
-  void clearLines() {
-    for (int row = colLength - 1; row >= 0; row--) {
-      bool rowIsFull = true;
-      for (int col = 0; col < rowLength; col++) {
-        if (gameBoard[row][col] == null) {
-          rowIsFull = false;
-          break;
-        }
-      }
-      if (rowIsFull) {
-        for (int r = row; r > 0; r--) {
-          gameBoard[r] = List.from(gameBoard[r - 1]);
-        }
-        gameBoard[0] = List.generate(rowLength, (index) => null);
-        currentScore++;
-        row++;
-      }
-    }
-  }
-
   void moveRight() {
     if (!checkCollision(Direction.right)) {
       currentPiece.movePiece(Direction.right);
@@ -135,37 +116,6 @@ class GameManager {
     if (!checkCollision(Direction.left)) {
       currentPiece.movePiece(Direction.left);
     }
-  }
-
-  bool positionIsValid(position) {
-    int row = (position / rowLength).floor();
-    int col = position % rowLength;
-
-    if (row < 0 || col < 0 || gameBoard[row][col] != null) {
-      return false;
-    } else {
-      return true;
-    }
-  }
-
-  bool piecePositionIsValid(List<int> piecePosition) {
-    bool firstColOccupied = false;
-    bool lastColOccupied = false;
-
-    for (int pos in piecePosition) {
-      if (!positionIsValid(pos)) {
-        return false;
-      }
-
-      int col = pos % rowLength;
-      if (col == 0) {
-        firstColOccupied = true;
-      }
-      if (col == rowLength - 1) {
-        lastColOccupied = true;
-      }
-    }
-    return !(firstColOccupied && lastColOccupied);
   }
 
   void rotatePiece() {
@@ -338,7 +288,7 @@ class GameManager {
         break;
     }
 
-    if (piecePositionIsValid(newPosition)) {
+    if (BoardService(this).piecePositionIsValid(newPosition)) {
       currentPiece.position = newPosition;
       currentPiece.rotationState = (currentPiece.rotationState + 1) % 4;
     }
