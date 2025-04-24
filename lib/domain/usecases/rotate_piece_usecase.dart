@@ -9,6 +9,8 @@ class RotatePieceUseCase {
   RotatePieceUseCase({required this.board, required this.rowLength});
 
   void execute(Piece piece) {
+    final newRotationState = (piece.rotationState + 1) % 4;
+
     final newPosition = RotationService.getRotationPosition(
       piece.type,
       piece.position,
@@ -18,7 +20,22 @@ class RotatePieceUseCase {
 
     if (BoardService.boardHasValidPosition(board, newPosition, rowLength)) {
       piece.position = newPosition;
-      piece.rotationState = (piece.rotationState + 1) % 4;
+      piece.rotationState = newRotationState;
+      return;
+    }
+
+    final movedLeft = newPosition.map((p) => p - 1).toList();
+    if (BoardService.boardHasValidPosition(board, movedLeft, rowLength)) {
+      piece.position = movedLeft;
+      piece.rotationState = newRotationState;
+      return;
+    }
+
+    final movedRight = newPosition.map((p) => p + 1).toList();
+    if (BoardService.boardHasValidPosition(board, movedRight, rowLength)) {
+      piece.position = movedRight;
+      piece.rotationState = newRotationState;
+      return;
     }
   }
 }
