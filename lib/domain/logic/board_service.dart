@@ -3,13 +3,14 @@ import 'package:tetris/domain/entities/values.dart';
 import 'dart:math';
 
 class BoardService {
-  static void clearLines(
+  static int clearLines(
     List<List<String?>> board,
     int rowLength,
     int colLength,
     Map<String, Piece> allPieces,
   ) {
     bool didClear;
+    int linesCleared = 0;
 
     do {
       didClear = false;
@@ -29,6 +30,7 @@ class BoardService {
         board[0] = List<String?>.filled(rowLength, null);
 
         didClear = true;
+        linesCleared++;
         break;
       }
 
@@ -48,6 +50,7 @@ class BoardService {
         }
       }
     } while (didClear);
+    return linesCleared;
   }
 
   static void _applyShapeGravity(

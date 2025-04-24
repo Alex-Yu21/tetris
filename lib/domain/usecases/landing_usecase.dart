@@ -15,7 +15,8 @@ class LandingUseCase {
     required this.createNewPiece,
   });
 
-  void execute(Piece piece, Map<String, Piece> allPieces, String? pieceId) {
+  int execute(Piece piece, Map<String, Piece> allPieces, String? pieceId) {
+    int linesCleared = 0;
     final isColliding = BoardService.checkCollision(
       board: board,
       piecePosition: piece.position,
@@ -33,9 +34,15 @@ class LandingUseCase {
         }
       }
 
-      BoardService.clearLines(board, rowLength, colLength, allPieces);
+      linesCleared += BoardService.clearLines(
+        board,
+        rowLength,
+        colLength,
+        allPieces,
+      );
 
       createNewPiece();
     }
+    return linesCleared;
   }
 }

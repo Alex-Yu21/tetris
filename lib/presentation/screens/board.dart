@@ -101,11 +101,7 @@ class _BoardState extends State<BoardScreen> {
           CardWidget(
             title: 'NEXT:',
             result: Text(
-              widget.manager.nextPiece?.type.name.toUpperCase().substring(
-                    0,
-                    1,
-                  ) ??
-                  '',
+              widget.manager.nextPiece?.type.name.substring(0, 1) ?? '',
             ),
           ),
           ButtonIconWidget(

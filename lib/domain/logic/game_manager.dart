@@ -77,7 +77,7 @@ class GameManager {
   }
 
   void checkLanding() {
-    LandingUseCase(
+    currentScore += LandingUseCase(
       board: gameBoard,
       rowLength: rowLength,
       colLength: colLength,
