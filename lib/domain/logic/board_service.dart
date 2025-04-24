@@ -9,44 +9,45 @@ class BoardService {
     int colLength,
     Map<String, Piece> allPieces,
   ) {
-    final touchedIds = <String>{};
+    bool didClear;
 
-    for (int row = colLength - 1; row >= 0; row--) {
-      bool full = true;
-      for (int c = 0; c < rowLength; c++) {
-        if (board[row][c] == null) {
-          full = false;
-          break;
+    do {
+      didClear = false;
+      final touchedIds = <String>{};
+
+      for (int row = colLength - 1; row >= 0; row--) {
+        bool full = board[row].every((cell) => cell != null);
+        if (!full) continue;
+
+        for (int c = 0; c < rowLength; c++) {
+          touchedIds.add(board[row][c]!);
+        }
+
+        for (int r = row; r > 0; r--) {
+          board[r] = List<String?>.from(board[r - 1]);
+        }
+        board[0] = List<String?>.filled(rowLength, null);
+
+        didClear = true;
+        break;
+      }
+
+      if (!didClear) break;
+
+      final remainingIds = allPieces.keys.toList();
+      for (final id in remainingIds) {
+        if (!board.any((r) => r.contains(id))) {
+          allPieces.remove(id);
+          continue;
+        }
+
+        if (touchedIds.contains(id)) {
+          _applyBlockGravity(id, board, rowLength, colLength);
+        } else {
+          _applyShapeGravity(id, board, rowLength, colLength);
         }
       }
-      if (!full) continue;
-
-      for (int c = 0; c < rowLength; c++) {
-        touchedIds.add(board[row][c]!);
-      }
-
-      for (int r = row; r > 0; r--) {
-        board[r] = List<String?>.from(board[r - 1]);
-      }
-      board[0] = List<String?>.filled(rowLength, null);
-
-      row++;
-    }
-
-    final remainingIds = allPieces.keys.toList();
-    for (final id in remainingIds) {
-      final exists = board.any((r) => r.contains(id));
-      if (!exists) {
-        allPieces.remove(id);
-        continue;
-      }
-
-      if (touchedIds.contains(id)) {
-        _applyBlockGravity(id, board, rowLength, colLength);
-      } else {
-        _applyShapeGravity(id, board, rowLength, colLength);
-      }
-    }
+    } while (didClear);
   }
 
   static void _applyShapeGravity(
