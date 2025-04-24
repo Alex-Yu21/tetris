@@ -1,10 +1,9 @@
 import 'package:tetris/domain/entities/piece.dart';
-import 'package:tetris/domain/entities/values.dart';
 import 'package:tetris/domain/logic/board_service.dart';
 import 'package:tetris/domain/logic/rotation_service.dart';
 
 class RotatePieceUseCase {
-  final List<List<Tetromino?>> board;
+  final List<List<String?>> board;
   final int rowLength;
 
   RotatePieceUseCase({required this.board, required this.rowLength});

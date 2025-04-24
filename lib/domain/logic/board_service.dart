@@ -1,38 +1,110 @@
+import 'package:tetris/domain/entities/piece.dart';
 import 'package:tetris/domain/entities/values.dart';
+import 'dart:math';
 
 class BoardService {
   static void clearLines(
-    List<List<Tetromino?>> board,
+    List<List<String?>> board,
     int rowLength,
     int colLength,
+    Map<String, Piece> allPieces,
   ) {
-    for (int row = colLength - 1; row >= 0; row--) {
-      bool rowIsFull = true;
+    final touchedIds = <String>{};
 
-      for (int col = 0; col < rowLength; col++) {
-        if (board[row][col] == null) {
-          rowIsFull = false;
+    for (int row = colLength - 1; row >= 0; row--) {
+      bool full = true;
+      for (int c = 0; c < rowLength; c++) {
+        if (board[row][c] == null) {
+          full = false;
           break;
         }
       }
+      if (!full) continue;
 
-      if (rowIsFull) {
-        for (int r = row; r > 0; r--) {
-          for (int c = 0; c < rowLength; c++) {
-            board[r][c] = board[r - 1][c];
-          }
-        }
+      for (int c = 0; c < rowLength; c++) {
+        touchedIds.add(board[row][c]!);
+      }
 
-        for (int c = 0; c < rowLength; c++) {
-          board[0][c] = null;
-        }
+      for (int r = row; r > 0; r--) {
+        board[r] = List<String?>.from(board[r - 1]);
+      }
+      board[0] = List<String?>.filled(rowLength, null);
 
-        row++;
+      row++;
+    }
+
+    final remainingIds = allPieces.keys.toList();
+    for (final id in remainingIds) {
+      final exists = board.any((r) => r.contains(id));
+      if (!exists) {
+        allPieces.remove(id);
+        continue;
+      }
+
+      if (touchedIds.contains(id)) {
+        _applyBlockGravity(id, board, rowLength, colLength);
+      } else {
+        _applyShapeGravity(id, board, rowLength, colLength);
       }
     }
   }
 
-  static bool isTopRowOccupied({required List<List<Tetromino?>> board}) {
+  static void _applyShapeGravity(
+    String id,
+    List<List<String?>> board,
+    int rowLength,
+    int colLength,
+  ) {
+    final blocks = <Point<int>>[];
+    for (int r = 0; r < colLength; r++) {
+      for (int c = 0; c < rowLength; c++) {
+        if (board[r][c] == id) blocks.add(Point(r, c));
+      }
+    }
+    if (blocks.isEmpty) return;
+
+    for (final p in blocks) {
+      board[p.x][p.y] = null;
+    }
+
+    int maxFall = colLength;
+    for (final p in blocks) {
+      int dist = 0, nr = p.x + 1;
+      while (nr < colLength && board[nr][p.y] == null) {
+        dist++;
+        nr++;
+      }
+      maxFall = min(maxFall, dist);
+      if (maxFall == 0) break;
+    }
+
+    for (final p in blocks) {
+      board[p.x + maxFall][p.y] = id;
+    }
+  }
+
+  static void _applyBlockGravity(
+    String id,
+    List<List<String?>> board,
+    int rowLength,
+    int colLength,
+  ) {
+    bool moved;
+    do {
+      moved = false;
+      for (int r = colLength - 2; r >= 0; r--) {
+        for (int c = 0; c < rowLength; c++) {
+          if (board[r][c] == id && board[r + 1][c] == null) {
+            board[r + 1][c] = id;
+            board[r][c] = null;
+            moved = true;
+          }
+        }
+      }
+    } while (moved);
+  }
+
+  static bool isTopRowOccupied({required List<List<String?>> board}) {
     for (int col = 0; col < rowLength; col++) {
       if (board[0][col] != null) {
         return true;
@@ -42,7 +114,7 @@ class BoardService {
   }
 
   static bool checkCollision({
-    required List<List<Tetromino?>> board,
+    required List<List<String?>> board,
     required List<int> piecePosition,
     required Direction direction,
     required int rowLength,
@@ -72,7 +144,7 @@ class BoardService {
   }
 
   static bool boardHasValidPosition(
-    List<List<Tetromino?>> board,
+    List<List<String?>> board,
     List<int> piecePosition,
     int rowLength,
   ) {
@@ -87,7 +159,9 @@ class BoardService {
         return false;
       }
 
-      if (board[row][col] != null) return false;
+      if (board[row][col] != null) {
+        return false;
+      }
 
       if (col == 0) firstColOccupied = true;
       if (col == rowLength - 1) lastColOccupied = true;

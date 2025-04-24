@@ -171,12 +171,15 @@ class _BoardState extends State<BoardScreen> {
           itemBuilder: (context, index) {
             int row = (index / rowLength).floor();
             int col = index % rowLength;
+            final String? cellId = widget.manager.gameBoard[row][col];
+
             if (widget.manager.currentPiece.position.contains(index)) {
               return PixelWidget(color: widget.manager.currentPiece.color);
-            } else if (widget.manager.gameBoard[row][col] != null) {
-              final Tetromino? tetrominoType =
-                  widget.manager.gameBoard[row][col];
-              return PixelWidget(color: tetrominoColors[tetrominoType]!);
+            } else if (cellId != null &&
+                widget.manager.allPieces.containsKey(cellId)) {
+              final piece = widget.manager.allPieces[cellId]!;
+
+              return PixelWidget(color: tetrominoColors[piece.type]!);
             } else {
               return const PixelWidget(
                 color: Color.fromARGB(255, 253, 239, 205),

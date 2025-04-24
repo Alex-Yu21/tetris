@@ -7,7 +7,7 @@ import 'package:tetris/domain/usecases/landing_usecase.dart';
 import 'package:tetris/domain/usecases/rotate_piece_usecase.dart';
 
 class GameManager {
-  List<List<Tetromino?>> gameBoard = List.generate(
+  List<List<String?>> gameBoard = List.generate(
     colLength,
     (i) => List.generate(rowLength, (i) => null),
   );
@@ -21,16 +21,19 @@ class GameManager {
   void Function()? onTick;
   void Function()? onGameOver;
 
+  Map<String, Piece> allPieces = {};
+  String currentPieceId = '';
+
   void _setCurrentPiece(Piece piece) {
     currentPiece = piece;
     currentPiece.initializePiece();
+    currentPieceId = DateTime.now().millisecondsSinceEpoch.toString();
+    allPieces[currentPieceId] = piece;
   }
 
   void _generateNextPiece() {
     nextPiece = _generateRandomPiece();
   }
-
-  // TODO: rotation near border
 
   GameLoop? _loop;
 
@@ -40,16 +43,19 @@ class GameManager {
       (i) => List.generate(rowLength, (i) => null),
     );
     currentScore = 0;
+    allPieces = {};
     gameOver = false;
     isPaused = false;
-    currentPiece = _generateRandomPiece();
-    currentPiece.initializePiece();
-    nextPiece = _generateRandomPiece();
+
+    _setCurrentPiece(_generateRandomPiece());
+    _generateNextPiece();
+
     _loop ??= GameLoop(this);
     _loop!.start(const Duration(milliseconds: 800));
   }
 
   void startGame() {
+    allPieces = {};
     _setCurrentPiece(_generateRandomPiece());
     _generateNextPiece();
     _loop = GameLoop(this);
@@ -76,7 +82,7 @@ class GameManager {
       rowLength: rowLength,
       colLength: colLength,
       createNewPiece: createNewPiece,
-    ).execute(currentPiece);
+    ).execute(currentPiece, allPieces, currentPieceId);
   }
 
   void createNewPiece() {
